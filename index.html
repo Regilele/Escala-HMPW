@@ -121,36 +121,53 @@
     <!-- ----------------------------------------------------
        1. LOGIN SECTION (WITH FIRST ACCESS GATE)
        ---------------------------------------------------- -->
-    <div x-show="!isLoggedIn" x-cloak class="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 relative overflow-hidden font-sans text-slate-100" style="background-image: linear-gradient(to right, rgba(12, 15, 26, 0.85), rgba(4, 16, 18, 0.65)), url('/src/assets/images/login_bg_new_1779377338628.png')">
+    <div x-show="!isLoggedIn" x-cloak class="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 relative overflow-hidden font-sans text-slate-100" style="background-image: linear-gradient(to right, rgba(12, 15, 26, 0.85), rgba(4, 16, 18, 0.65)), url('/src/assets/images/tech_transformation_bg_1779395925811.png')">
         <div class="max-w-md w-full flex flex-col space-y-6 z-10">
             <!-- Main Login Card -->
             <div class="backdrop-blur-md bg-slate-900/75 border border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl flex flex-col min-h-[460px] relative">
                 
                 <!-- Brand Header -->
-                <div class="bg-gradient-to-b from-indigo-950 to-slate-900 text-white p-6 pb-4 border-b border-slate-800/80 flex flex-col items-center text-center">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-white p-1 rounded-xl shadow-md">
-                            <svg class="w-10 h-10 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                        </div>
-                        <div class="text-left">
-                            <h1 class="text-sm font-extrabold tracking-wider text-white uppercase">ReGiSA</h1>
-                            <span class="text-[10px] text-indigo-400 font-bold block leading-none">GESTÃO DE ESCALAS</span>
+                <div class="relative bg-slate-950 text-white p-7 pb-5 border-b border-slate-800/80 flex flex-col items-center text-center overflow-hidden">
+                    <!-- Top neon tech strip -->
+                    <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600"></div>
+                    <!-- Ambient subtle scanner line animation or grid -->
+                    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.15),rgba(255,255,255,0))]"></div>
+                    
+                    <div class="relative flex flex-col items-center gap-2 z-10 w-full">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-gradient-to-br from-indigo-950/80 to-slate-950 p-2.5 rounded-2xl border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.25)] relative group">
+                                <!-- Corner Tech Accents -->
+                                <div class="absolute -top-1 -left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-indigo-400"></div>
+                                <div class="absolute -bottom-1 -right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-indigo-400"></div>
+                                <svg class="w-8 h-8 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <h1 class="text-lg font-black tracking-[0.2em] bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-cyan-300 uppercase leading-none drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">ReGiSA</h1>
+                                <span class="text-[9px] text-cyan-400 font-extrabold block leading-none tracking-widest mt-1 uppercase">SISTEMA INTELIGENTE DE ESCALAS</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Form Panel -->
-                <div class="p-6 flex-grow flex flex-col justify-center bg-slate-900/60">
+                <div class="p-6 flex-grow flex flex-col justify-center bg-slate-950/40 relative overflow-hidden">
+                    <!-- High tech subtle decorative lines -->
+                    <div class="absolute right-0 bottom-0 w-24 h-24 bg-[radial-gradient(circle_at_bottom_right,rgba(6,182,212,0.06),transparent)] pointer-events-none"></div>
+                    <div class="absolute left-0 top-0 w-24 h-24 bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.06),transparent)] pointer-events-none"></div>
                     
                     <!-- Form 1: Standard Authenticator -->
-                    <div x-show="!pendingUser" class="space-y-5">
+                    <div x-show="!pendingUser" class="space-y-5 relative z-10">
                         <div class="space-y-1 text-center">
-                            <h2 class="text-lg font-bold text-slate-100 uppercase tracking-wide">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-cyan-950/60 text-cyan-400 border border-cyan-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                                Gateway de Acesso Ativo
+                            </span>
+                            <h2 class="text-lg font-black text-white uppercase tracking-wide mt-1">
                                 Acesso Corporativo
                             </h2>
                             <p class="text-xs text-slate-400 max-w-xs mx-auto">
@@ -161,43 +178,50 @@
                         <form @submit.prevent="handleLogin()" class="space-y-4">
                             <!-- Username Input -->
                             <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block pl-1">
-                                    Usuário ou E-mail
-                                </label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <div class="flex items-center justify-between px-1">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+                                        Usuário ou E-mail
+                                    </label>
+                                    <span class="text-[8px] font-mono text-cyan-500/80 font-bold uppercase tracking-wider">[USER_ID]</span>
+                                </div>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-cyan-505/70 group-focus-within:text-cyan-405 transition-colors">
                                         <i data-lucide="user" class="w-4 h-4"></i>
                                     </div>
                                     <input
                                       type="text"
                                       x-model="usernameInput"
                                       placeholder="Ex: regi, rodrigo ou e-mail..."
-                                      class="w-full pl-10 pr-4 py-2.5 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 transition-all"
+                                      class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-805 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-cyan-500/15 transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]"
                                       required
                                     />
+                                    <div class="absolute right-3.5 top-3 w-1.5 h-1.5 rounded-full bg-slate-800 group-focus-within:bg-cyan-500 transition-colors"></div>
                                 </div>
                             </div>
 
                             <!-- Password Input -->
                             <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block pl-1">
-                                    Senha Corporativa
-                                </label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <div class="flex items-center justify-between px-1">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+                                        Senha Corporativa
+                                    </label>
+                                    <span class="text-[8px] font-mono text-cyan-500/80 font-bold uppercase tracking-wider">[SEC_TOKEN]</span>
+                                </div>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-cyan-505/70 group-focus-within:text-cyan-405 transition-colors">
                                         <i data-lucide="key-round" class="w-4 h-4"></i>
                                     </div>
                                     <input
                                       :type="showPassword ? 'text' : 'password'"
                                       x-model="passwordInput"
                                       placeholder="Sua senha..."
-                                      class="w-full pl-10 pr-10 py-2.5 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 tracking-wider focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 transition-all"
+                                      class="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-805 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 tracking-wider focus:outline-none focus:ring-4 focus:ring-cyan-500/15 transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]"
                                       required
                                     />
                                     <button
                                       type="button"
                                       @click="showPassword = !showPassword"
-                                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300"
+                                      class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-cyan-400 transition-colors"
                                     >
                                         <i x-show="!showPassword" data-lucide="eye" class="w-4 h-4"></i>
                                         <i x-show="showPassword" data-lucide="eye-off" class="w-4 h-4" x-cloak></i>
@@ -208,34 +232,38 @@
                             <!-- Login Error Alert -->
                             <div x-show="loginError" x-transition
                                  class="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center gap-2 text-xs font-semibold leading-snug" x-cloak>
-                                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0 animate-pulse"></i>
                                 <span x-text="loginError"></span>
                             </div>
 
                             <button
                               type="submit"
-                              class="w-full py-3 bg-indigo-600 hover:bg-indigo-550 active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-indigo-650/15 mt-2"
+                              class="w-full py-3 bg-gradient-to-r from-indigo-650 via-indigo-600 to-cyan-600 hover:from-indigo-600 hover:via-indigo-500 hover:to-cyan-500 active:scale-[0.98] text-white font-black text-xs uppercase tracking-[0.15em] rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-indigo-600/20 mt-2 relative overflow-hidden group"
                             >
-                                Authenticar no Sistema
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                <span class="relative z-10 flex items-center gap-2">
+                                    Autenticar no Sistema
+                                    <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+                                </span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
                             </button>
                         </form>
                     </div>
 
                     <!-- Form 2: Mandatory Change Password Gate (First Access) -->
-                    <div x-show="pendingUser" x-transition class="space-y-4" x-cloak>
+                    <div x-show="pendingUser" x-transition class="space-y-4 relative z-10" x-cloak>
                         <div class="space-y-2 text-center pb-1">
-                            <div class="inline-flex bg-indigo-500/10 border border-indigo-500/20 p-2.5 rounded-2xl text-indigo-400">
+                            <div class="inline-flex bg-cyan-500/10 border border-cyan-500/20 p-2.5 rounded-2xl text-cyan-400 relative">
+                                <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan-400 animate-ping"></div>
                                 <i data-lucide="fingerprint" class="w-7 h-7"></i>
                             </div>
                             <div>
-                                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/25"
+                                <span class="px-2.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/25"
                                       x-text="pendingUser?.role"></span>
-                                <h3 class="text-sm font-extrabold text-slate-100 uppercase tracking-wide mt-1.5 leading-snug">
+                                <h3 class="text-sm font-extrabold text-slate-100 uppercase tracking-wide mt-1.5 leading-snug font-sans">
                                     Mudar Senha Provisória
                                 </h3>
-                                <p class="text-[11px] text-slate-400 max-w-xs mx-auto mt-0.5">
-                                    Olá <strong class="text-white" x-text="pendingUser?.name"></strong>, este é seu primeiro acesso com a senha padrão. É obrigatório registrar uma senha pessoal única para habilitar seu acesso.
+                                <p class="text-[11px] text-slate-400 max-w-xs mx-auto mt-0.5 leading-snug">
+                                    Olá <strong class="text-white" x-text="pendingUser?.name"></strong>, este é seu primeiro acesso com a senha padrão. É obrigatório registrar uma nova credencial corporativa pessoal.
                                 </p>
                             </div>
                         </div>
@@ -243,27 +271,33 @@
                         <div x-show="!changeSuccess" class="space-y-3.5">
                             <form @submit.prevent="handleChangePassword()" class="space-y-3">
                                 <div>
-                                    <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block pl-1 mb-1">
-                                        Nova Senha
-                                    </label>
+                                    <div class="flex items-center justify-between px-1 mb-1">
+                                        <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block font-sans">
+                                            Nova Senha
+                                        </label>
+                                        <span class="text-[8px] font-mono text-cyan-500/80 font-bold uppercase tracking-wider">[MIN_5_CHAR]</span>
+                                    </div>
                                     <input
                                       :type="showNewPassword ? 'text' : 'password'"
                                       x-model="newPassword"
                                       placeholder="Mínimo de 5 caracteres..."
-                                      class="w-full px-4 py-2 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500"
+                                      class="w-full px-4 py-2 bg-slate-950 border border-slate-805 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-cyan-500/15 transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]"
                                       required
                                     />
                                 </div>
 
                                 <div>
-                                    <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block pl-1 mb-1">
-                                        Confirmar Nova Senha
-                                    </label>
+                                    <div class="flex items-center justify-between px-1 mb-1">
+                                        <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block font-sans">
+                                            Confirmar Nova Senha
+                                        </label>
+                                        <span class="text-[8px] font-mono text-cyan-500/80 font-bold uppercase tracking-wider">[VERIFY_MATCH]</span>
+                                    </div>
                                     <input
                                       :type="showNewPassword ? 'text' : 'password'"
                                       x-model="confirmPassword"
                                       placeholder="Repita a nova senha..."
-                                      class="w-full px-4 py-2 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500"
+                                      class="w-full px-4 py-2 bg-slate-950 border border-slate-805 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-cyan-500/15 transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]"
                                       required
                                     />
                                 </div>
@@ -273,7 +307,7 @@
                                       id="toggle-pass-visibility"
                                       type="checkbox"
                                       x-model="showNewPassword"
-                                      class="rounded border-slate-800 bg-slate-950/80 text-indigo-600 focus:ring-indigo-550/25 cursor-pointer w-3.5 h-3.5"
+                                      class="rounded border-slate-800 bg-slate-950 text-indigo-500 focus:ring-cyan-500/15 cursor-pointer w-3.5 h-3.5"
                                     />
                                     <label for="toggle-pass-visibility" class="text-[10px] text-slate-400 font-semibold cursor-pointer select-none">
                                         Exibir caracteres da senha
@@ -290,13 +324,13 @@
                                     <button
                                       type="button"
                                       @click="pendingUser = null"
-                                      class="flex-1 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                                      class="flex-1 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer border border-slate-700/60"
                                     >
                                         Voltar
                                     </button>
                                     <button
                                       type="submit"
-                                      class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md shadow-emerald-600/10"
+                                      class="flex-1 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md shadow-emerald-600/15 border border-emerald-500/30"
                                     >
                                         Salvar e Entrar
                                     </button>
@@ -304,13 +338,13 @@
                             </form>
                         </div>
 
-                        <div x-show="changeSuccess" class="py-6 flex flex-col items-center text-center space-y-3 bg-emerald-950/25 border border-emerald-500/20 rounded-2xl" x-cloak>
+                        <div x-show="changeSuccess" class="py-6 flex flex-col items-center text-center space-y-3 bg-emerald-950/40 border border-emerald-500/20 rounded-2xl relative" x-cloak>
                             <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-400 animate-bounce"></i>
                             <div>
                                 <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">
                                     Senha Atualizada!
                                 </h4>
-                                <p class="text-[10px] text-slate-300 mt-0.5">
+                                <p class="text-[10px] text-slate-300 mt-0.5 leading-snug">
                                     Sua credencial foi autenticada com sucesso.<br />
                                     Entrando na escala do hospital...
                                 </p>
@@ -2045,4 +2079,3 @@
     </script>
 </body>
 </html>
-
