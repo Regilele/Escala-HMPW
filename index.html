@@ -1,1 +1,2048 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReGiSA - Gestão de Escalas HMPW</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#030712',
+                            900: '#0f172a',
+                            850: '#1e293b',
+                            800: '#1e293b',
+                            750: '#334155',
+                        },
+                        indigo: {
+                            550: '#4f46e5',
+                            650: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Alpine.js Play CDN for robust reactive states -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e1b4b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #312e81;
+        }
+
+        /* Pitch Black Dark Theme Overrides */
+        html.dark, 
+        html.dark body, 
+        html.dark main,
+        html.dark #main-content-canvas {
+            background-color: #000000 !important;
+            background-image: none !important;
+            color: #f8fafc !important;
+        }
+        html.dark .bg-slate-100,
+        html.dark .bg-slate-50,
+        html.dark .bg-white,
+        html.dark .dark\:bg-slate-800,
+        html.dark .dark\:bg-slate-900 {
+            background-color: #000000 !important;
+        }
+        html.dark .bg-indigo-950,
+        html.dark aside,
+        html.dark .bg-slate-900 {
+            background-color: #0c0c0e !important;
+        }
+        html.dark .border,
+        html.dark .border-slate-200,
+        html.dark .border-slate-300,
+        html.dark .border-slate-700,
+        html.dark .dark\:border-slate-700 {
+            border-color: #1e293b !important;
+        }
+        html.dark .text-slate-800,
+        html.dark .text-slate-900,
+        html.dark .text-slate-700,
+        html.dark .text-slate-600,
+        html.dark .dark\:text-white,
+        html.dark .dark\:text-slate-100 {
+            color: #f8fafc !important;
+        }
+        html.dark .text-slate-400,
+        html.dark .dark\:text-slate-400 {
+            color: #94a3b8 !important;
+        }
+        html.dark .backdrop-blur-md {
+            background-color: rgba(12, 12, 14, 0.85) !important;
+        }
+        html.dark input, 
+        html.dark select, 
+        html.dark textarea {
+            background-color: #000000 !important;
+            border-color: #334155 !important;
+            color: #ffffff !important;
+        }
+        html.dark .bg-slate-950 {
+            background-color: #050505 !important;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#0c0f1a] via-[#0e1629] to-[#041012] font-sans text-slate-100 min-h-screen relative overflow-x-hidden antialiased"
+      x-data="regisaApp()"
+      x-init="initApp()">
+
+    <!-- BACKGROUND EFFECTS -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- ----------------------------------------------------
+       1. LOGIN SECTION (WITH FIRST ACCESS GATE)
+       ---------------------------------------------------- -->
+    <div x-show="!isLoggedIn" x-cloak class="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 relative overflow-hidden font-sans text-slate-100" style="background-image: linear-gradient(to right, rgba(12, 15, 26, 0.85), rgba(4, 16, 18, 0.65)), url('/src/assets/images/login_bg_new_1779377338628.png')">
+        <div class="max-w-md w-full flex flex-col space-y-6 z-10">
+            <!-- Main Login Card -->
+            <div class="backdrop-blur-md bg-slate-900/75 border border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl flex flex-col min-h-[460px] relative">
+                
+                <!-- Brand Header -->
+                <div class="bg-gradient-to-b from-indigo-950 to-slate-900 text-white p-6 pb-4 border-b border-slate-800/80 flex flex-col items-center text-center">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white p-1 rounded-xl shadow-md">
+                            <svg class="w-10 h-10 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <h1 class="text-sm font-extrabold tracking-wider text-white uppercase">ReGiSA</h1>
+                            <span class="text-[10px] text-indigo-400 font-bold block leading-none">GESTÃO DE ESCALAS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Panel -->
+                <div class="p-6 flex-grow flex flex-col justify-center bg-slate-900/60">
+                    
+                    <!-- Form 1: Standard Authenticator -->
+                    <div x-show="!pendingUser" class="space-y-5">
+                        <div class="space-y-1 text-center">
+                            <h2 class="text-lg font-bold text-slate-100 uppercase tracking-wide">
+                                Acesso Corporativo
+                            </h2>
+                            <p class="text-xs text-slate-400 max-w-xs mx-auto">
+                                Digite o seu nome de usuário ou e-mail corporativo cadastrado para entrar na plataforma.
+                            </p>
+                        </div>
+
+                        <form @submit.prevent="handleLogin()" class="space-y-4">
+                            <!-- Username Input -->
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block pl-1">
+                                    Usuário ou E-mail
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                        <i data-lucide="user" class="w-4 h-4"></i>
+                                    </div>
+                                    <input
+                                      type="text"
+                                      x-model="usernameInput"
+                                      placeholder="Ex: regi, rodrigo ou e-mail..."
+                                      class="w-full pl-10 pr-4 py-2.5 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 transition-all"
+                                      required
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block pl-1">
+                                    Senha Corporativa
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                        <i data-lucide="key-round" class="w-4 h-4"></i>
+                                    </div>
+                                    <input
+                                      :type="showPassword ? 'text' : 'password'"
+                                      x-model="passwordInput"
+                                      placeholder="Sua senha..."
+                                      class="w-full pl-10 pr-10 py-2.5 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 tracking-wider focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 transition-all"
+                                      required
+                                    />
+                                    <button
+                                      type="button"
+                                      @click="showPassword = !showPassword"
+                                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300"
+                                    >
+                                        <i x-show="!showPassword" data-lucide="eye" class="w-4 h-4"></i>
+                                        <i x-show="showPassword" data-lucide="eye-off" class="w-4 h-4" x-cloak></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Login Error Alert -->
+                            <div x-show="loginError" x-transition
+                                 class="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center gap-2 text-xs font-semibold leading-snug" x-cloak>
+                                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                                <span x-text="loginError"></span>
+                            </div>
+
+                            <button
+                              type="submit"
+                              class="w-full py-3 bg-indigo-600 hover:bg-indigo-550 active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-indigo-650/15 mt-2"
+                            >
+                                Authenticar no Sistema
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Form 2: Mandatory Change Password Gate (First Access) -->
+                    <div x-show="pendingUser" x-transition class="space-y-4" x-cloak>
+                        <div class="space-y-2 text-center pb-1">
+                            <div class="inline-flex bg-indigo-500/10 border border-indigo-500/20 p-2.5 rounded-2xl text-indigo-400">
+                                <i data-lucide="fingerprint" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/25"
+                                      x-text="pendingUser?.role"></span>
+                                <h3 class="text-sm font-extrabold text-slate-100 uppercase tracking-wide mt-1.5 leading-snug">
+                                    Mudar Senha Provisória
+                                </h3>
+                                <p class="text-[11px] text-slate-400 max-w-xs mx-auto mt-0.5">
+                                    Olá <strong class="text-white" x-text="pendingUser?.name"></strong>, este é seu primeiro acesso com a senha padrão. É obrigatório registrar uma senha pessoal única para habilitar seu acesso.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div x-show="!changeSuccess" class="space-y-3.5">
+                            <form @submit.prevent="handleChangePassword()" class="space-y-3">
+                                <div>
+                                    <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block pl-1 mb-1">
+                                        Nova Senha
+                                    </label>
+                                    <input
+                                      :type="showNewPassword ? 'text' : 'password'"
+                                      x-model="newPassword"
+                                      placeholder="Mínimo de 5 caracteres..."
+                                      class="w-full px-4 py-2 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500"
+                                      required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block pl-1 mb-1">
+                                        Confirmar Nova Senha
+                                    </label>
+                                    <input
+                                      :type="showNewPassword ? 'text' : 'password'"
+                                      x-model="confirmPassword"
+                                      placeholder="Repita a nova senha..."
+                                      class="w-full px-4 py-2 bg-slate-950/85 border border-slate-800 rounded-xl text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500"
+                                      required
+                                    />
+                                </div>
+
+                                <div class="flex items-center gap-2 pl-1.5 py-0.5">
+                                    <input
+                                      id="toggle-pass-visibility"
+                                      type="checkbox"
+                                      x-model="showNewPassword"
+                                      class="rounded border-slate-800 bg-slate-950/80 text-indigo-600 focus:ring-indigo-550/25 cursor-pointer w-3.5 h-3.5"
+                                    />
+                                    <label for="toggle-pass-visibility" class="text-[10px] text-slate-400 font-semibold cursor-pointer select-none">
+                                        Exibir caracteres da senha
+                                    </label>
+                                </div>
+
+                                <div x-show="changeError"
+                                     class="p-2.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center gap-2 text-xs font-medium" x-cloak>
+                                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                    <span x-text="changeError"></span>
+                                </div>
+
+                                <div class="flex gap-2 pt-1">
+                                    <button
+                                      type="button"
+                                      @click="pendingUser = null"
+                                      class="flex-1 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                                    >
+                                        Voltar
+                                    </button>
+                                    <button
+                                      type="submit"
+                                      class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md shadow-emerald-600/10"
+                                    >
+                                        Salvar e Entrar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div x-show="changeSuccess" class="py-6 flex flex-col items-center text-center space-y-3 bg-emerald-950/25 border border-emerald-500/20 rounded-2xl" x-cloak>
+                            <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-400 animate-bounce"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                                    Senha Atualizada!
+                                </h4>
+                                <p class="text-[10px] text-slate-300 mt-0.5">
+                                    Sua credencial foi autenticada com sucesso.<br />
+                                    Entrando na escala do hospital...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+       2. MAIN APPLICATION (AUTHENTICATED VIEW)
+       ---------------------------------------------------- -->
+    <div x-show="isLoggedIn" x-cloak class="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans text-slate-800" x-transition>
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col justify-between p-5 border-b md:border-b-0 md:border-r border-slate-800/80 shrink-0">
+            <div class="space-y-6">
+                <!-- Branding Header -->
+                <div class="flex items-center gap-3 px-1">
+                    <div class="bg-indigo-650 p-2 rounded-xl shadow-indigo-600/10">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-black tracking-widest text-white uppercase leading-none">ReGiSA</h2>
+                        <span class="text-[9px] text-indigo-400 font-bold block mt-0.5 tracking-wider">HOSPITAL MUNICIPAL</span>
+                    </div>
+                </div>
+
+                <!-- Nav list items -->
+                <nav class="space-y-1">
+                    <button @click="activeTab = 'escala'"
+                            :class="activeTab === 'escala' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'"
+                            class="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>Escala</span>
+                    </button>
+
+                    <button @click="activeTab = 'colaboradores'"
+                            :class="activeTab === 'colaboradores' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'"
+                            class="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">
+                        <i data-lucide="user-check" class="w-4 h-4"></i>
+                        <span>Colaboradores</span>
+                    </button>
+
+                    <button @click="activeTab = 'setores'"
+                            :class="activeTab === 'setores' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'"
+                            class="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        <span>Setores</span>
+                    </button>
+
+                    <button @click="activeTab = 'relatorios'"
+                            :class="activeTab === 'relatorios' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'"
+                            class="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                        <span>Relatórios</span>
+                    </button>
+
+                    <button @click="activeTab = 'logs'"
+                            :class="activeTab === 'logs' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'"
+                            class="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Logs de Acesso</span>
+                    </button>
+
+                    <button @click="activeTab = 'perfil'"
+                            :class="activeTab === 'perfil' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'"
+                            class="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>Perfil ADM</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer Active simulation user -->
+            <div class="mt-8 bg-indigo-900/20 border border-indigo-950 rounded-2xl p-4 space-y-3">
+                <div class="flex items-center gap-2 justify-between">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                        <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest font-mono">
+                            AUTENTICADO
+                        </span>
+                    </div>
+                    <button
+                      @click="handleLogout()"
+                      class="text-[9px] font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/25 px-2 py-0.5 rounded transition-all cursor-pointer"
+                    >
+                        Sair (Logout)
+                    </button>
+                </div>
+
+                <div class="space-y-0.5">
+                    <p class="text-xs font-bold text-white line-clamp-1" x-text="currentAdmin?.name"></p>
+                    <p class="text-[10px] text-slate-400 line-clamp-1" x-text="currentAdmin?.email"></p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN MAIN PANEL -->
+        <main class="flex-1 min-w-0 flex flex-col bg-slate-100 relative pb-12 overflow-y-auto">
+            
+            <!-- HEADER TOP BAR -->
+            <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between shadow-xs">
+                <div>
+                    <h2 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">MÓDULO DE ATENDIMENTO</h2>
+                    <h1 class="text-lg font-black text-slate-800 dark:text-white uppercase tracking-wide mt-1"
+                        x-text="activeTab === 'escala' ? 'Escala Hospitalar' : (activeTab === 'colaboradores' ? 'Gestão de Colaboradores' : (activeTab === 'setores' ? 'Configuração de Setores' : (activeTab === 'relatorios' ? 'Relatórios Financeiros & Tráfego' : (activeTab === 'logs' ? 'Audit de Segurança & Logs' : 'Administração do Sistema'))))"></h1>
+                </div>
+
+                <!-- Theme switch mode button -->
+                <button @click="toggleDarkMode()" 
+                        class="px-3.5 py-1.5 flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 dark:bg-slate-705 dark:hover:bg-slate-600 dark:text-slate-100 dark:border-slate-600 rounded-xl text-[11px] font-extrabold uppercase tracking-widest transition-all cursor-pointer shadow-3xs">
+                    <span x-show="!darkMode" class="flex items-center gap-1.5">
+                        <i data-lucide="moon" class="w-3.5 h-3.5 text-indigo-650"></i>
+                         <span>Escuro</span>
+                    </span>
+                    <span x-show="darkMode" class="flex items-center gap-1.5" x-cloak>
+                        <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+                        <span>Claro</span>
+                    </span>
+                </button>
+            </header>
+
+            <!-- CONTAINER CONTENT VIEWS -->
+            <div class="p-6">
+                
+                <!-- 2.1 TAB ESCALA (EQUAL TO THE MAIN COMPONENT) -->
+                <div x-show="activeTab === 'escala'" class="space-y-6">
+                    
+                    <!-- Top filter bar tools -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
+                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            <!-- Sector selector -->
+                            <div class="relative shrink-0 w-full sm:w-auto">
+                                <select x-model="selectedSectorId"
+                                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/25">
+                                    <template x-for="sec in sectors" :key="sec.id">
+                                        <option :value="sec.id" x-text="sec.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+
+                            <!-- Year/Month switcher -->
+                            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1 shrink-0">
+                                <button @click="prevMonth()" class="p-1 hover:bg-white rounded transition-colors text-slate-600">
+                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                </button>
+                                <span class="text-[11px] font-black text-slate-700 px-2 select-none uppercase tracking-wide">
+                                    <span x-text="getMonthNameString(selectedMonth)"></span> / <span x-text="selectedYear"></span>
+                                </span>
+                                <button @click="nextMonth()" class="p-1 hover:bg-white rounded transition-colors text-slate-600">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search and add block -->
+                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                            <div class="relative w-full sm:w-64">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                                </span>
+                                <input
+                                  type="text"
+                                  x-model="searchQuery"
+                                  placeholder="Pesquisar matricula, nome..."
+                                  class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-405 focus:outline-none focus:ring-2 focus:ring-indigo-500/25"
+                                />
+                            </div>
+
+                            <button
+                              @click="isAddCollabOpen = true"
+                              class="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                            >
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main grid Container table -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                        <div class="p-4 border-b border-slate-100 flex items-center justify-between flex-wrap gap-2 bg-slate-50/50">
+                            <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                                <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+                                <span>Quadro de Escala: Setor <span class="text-indigo-700 font-extrabold" x-text="getSectorName(selectedSectorId)"></span></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button @click="exportToExcelSimulation()"
+                                        class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl px-3 py-1.5 flex items-center gap-1.5 transition-all">
+                                    <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-600"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Scrollable grid table -->
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full border-collapse text-left select-none text-[10px]">
+                                <thead>
+                                    <tr class="bg-slate-900 text-white border-b border-indigo-950 translate-z-0">
+                                        <th class="p-3 sticky left-0 bg-slate-950/95 font-bold uppercase min-w-[140px] z-20 shadow-[2px_0_5px_rgba(0,0,0,0.15)] leading-tight">
+                                            Nome do Profissional
+                                        </th>
+                                        <th class="p-3 font-semibold uppercase min-w-[70px] text-center text-slate-400">
+                                            Cargo
+                                        </th>
+                                        <th class="p-3 font-semibold uppercase min-w-[60px] text-center text-slate-400">
+                                            Turno
+                                        </th>
+                                        <th class="p-3 font-semibold uppercase min-w-[50px] text-center text-slate-400">
+                                            Ref.
+                                        </th>
+                                        <!-- Days generation header loop -->
+                                        <template x-for="val in daysArrayObj()" :key="val.day">
+                                            <th class="p-1 min-w-[28px] text-center font-bold relative border-r border-indigo-950/40"
+                                                :class="val.isWeekend ? 'bg-indigo-950 text-rose-300' : 'bg-slate-900 text-slate-200'">
+                                                <span class="block text-[8px]" x-text="val.dayName"></span>
+                                                <span class="block text-xs" x-text="val.day"></span>
+                                            </th>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="item in filteredCollaborators()" :key="item.id">
+                                        <tr class="border-b border-slate-150 hover:bg-indigo-50/20 transition-all font-semibold text-slate-800">
+                                            <!-- Collab Name stuck on left -->
+                                            <td class="p-3 sticky left-0 bg-white shadow-[2px_0_5px_rgba(0,0,0,0.05)] font-bold min-w-[140px] z-10 flex flex-col">
+                                                <span class="text-slate-900 font-extrabold uppercase truncate leading-none text-[11px]" x-text="item.name"></span>
+                                                <span class="text-[8px] text-slate-400 mt-1 uppercase font-mono tracking-wider">M: <span x-text="item.matricula"></span></span>
+                                            </td>
+                                            <td class="p-2 text-center text-slate-500 font-mono text-[9px]" x-text="item.funcao"></td>
+                                            <td class="p-2 text-center text-slate-500 text-[9px]" x-text="item.turno"></td>
+                                            <td class="p-2 text-center text-slate-500 text-[9px]" x-text="item.jornada"></td>
+                                            <!-- Shift values for each day -->
+                                            <template x-for="dayObj in daysArrayObj()" :key="dayObj.day">
+                                                <td class="p-0.5 border-r border-slate-100 text-center relative cursor-pointer group"
+                                                    @click="openCellEditor(item.id, dayObj.day)">
+                                                    <div class="h-8 flex items-center justify-center font-extrabold rounded transition-all text-[9.5px]"
+                                                         :class="getCellStylesDynamic(item.id, dayObj.day, dayObj.isWeekend)">
+                                                        <span x-text="getScheduleValue(item.id, dayObj.day)"></span>
+                                                    </div>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Shift legends list visualizer helper -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-widest mb-4">LEGENDA DOS TIPOS DE PLANTÃO</h4>
+                        <div class="flex flex-wrap gap-2.5">
+                            <template x-for="leg in legends" :key="leg.code">
+                                <div class="px-3 py-1.5 border rounded-xl flex items-center gap-2 font-mono text-[10px] bg-slate-50 border-slate-200/80">
+                                    <span class="py-0.5 px-2 rounded font-black text-center"
+                                          :class="leg.color + ' ' + leg.textColor"
+                                          x-text="leg.code"></span>
+                                    <span class="text-slate-500 font-bold" x-text="leg.label"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 2.2 TAB COLABORADORES -->
+                <div x-show="activeTab === 'colaboradores'" class="space-y-6" x-cloak>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Lista Completa de Profissionais Cadastrados</h3>
+                            <button x-show="currentAdmin?.role !== 'LEITOR'" @click="isAddCollabOpen = true" class="py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all">
+                                Cadastrar Novo
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-900 text-slate-200 uppercase font-black tracking-wider text-[10px] border-b border-indigo-950">
+                                        <th class="p-3">Matrícula</th>
+                                        <th class="p-3">Nome do Profissional</th>
+                                        <th class="p-3">Cargo Executivo</th>
+                                        <th class="p-3">Setor Associado</th>
+                                        <th class="p-3">Jornada</th>
+                                        <th class="p-3">Turno</th>
+                                        <th class="p-3 text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="col in collaborators" :key="col.id">
+                                        <tr class="border-b border-slate-100 hover:bg-slate-50 font-semibold text-slate-700">
+                                            <td class="p-3 font-mono text-indigo-700" x-text="col.matricula"></td>
+                                            <td class="p-3 uppercase text-slate-900 font-bold" x-text="col.name"></td>
+                                            <td class="p-3 text-slate-400 font-mono uppercase text-[11px]" x-text="col.funcao"></td>
+                                            <td class="p-3 text-slate-650" x-text="getSectorName(col.sectorId)"></td>
+                                            <td class="p-3 font-bold text-emerald-600" x-text="col.jornada"></td>
+                                            <td class="p-3" x-text="col.turno"></td>
+                                            <td class="p-3 text-center">
+                                                <button @click="deleteCollaborator(col.id)" class="text-red-500 hover:text-red-700 bg-red-100/50 hover:bg-red-200/50 px-2.5 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wider">
+                                                    Excluir
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2.3 TAB SETORES -->
+                <div x-show="activeTab === 'setores'" class="space-y-6" x-cloak>
+                    <!-- Top controller header with ADD button -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-5 rounded-2xl border border-slate-250 shadow-xs gap-4">
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-widest">Configuração de Unidades & Setores</h2>
+                            <p class="text-[11px] text-slate-500">Cadastre e gerencie as unidades de ambiência clínica para planejamento de escalas.</p>
+                        </div>
+                        <button
+                            @click="isAddSectorOpen = true"
+                            class="bg-indigo-600 hover:bg-indigo-750 text-white px-4 py-2.5 rounded-xl font-bold text-xs inline-flex items-center gap-2 transition-all cursor-pointer shadow-md shadow-indigo-600/15"
+                        >
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Adicionar Novo Setor
+                        </button>
+                    </div>
+
+                    <!-- Sector Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <template x-for="sec in sectors" :key="sec.id">
+                            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-3xs flex flex-col justify-between transition-all hover:border-indigo-200">
+                                <div class="space-y-3">
+                                    <div class="flex items-start justify-between">
+                                        <div class="space-y-1">
+                                            <span class="text-[9px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2.5 py-0.5 rounded-sm inline-block">
+                                                Unidade Clínica
+                                            </span>
+                                            <h3 class="font-extrabold text-slate-800 text-sm tracking-wide uppercase" x-text="sec.name"></h3>
+                                        </div>
+                                        <button
+                                            @click="deleteSector(sec.id)"
+                                            class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded"
+                                            title="Remover Setor"
+                                        >
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div class="space-y-2 py-1">
+                                        <p class="text-xs text-slate-500 line-clamp-2" x-text="sec.description || 'Nenhuma descrição inserida para esta unidade.'"></p>
+                                        
+                                        <div class="rounded-xl p-3 space-y-2 border bg-slate-50 border-slate-100 text-xs">
+                                            <div class="flex items-center gap-2 text-slate-600">
+                                                <svg class="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                </svg>
+                                                <div>
+                                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Coordenador Resp.</span>
+                                                    <span class="font-black uppercase text-slate-700 font-mono text-[10px]" x-text="sec.managerName"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-2 text-slate-600">
+                                                <svg class="w-4 h-4 text-indigo-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                </svg>
+                                                <div>
+                                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Dimensionamento de Equipe</span>
+                                                    <span class="font-semibold text-slate-700" x-text="`${collaborators.filter(c => c.sectorId === sec.id).length} colaboradores ativos`"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- 2.4 TAB RELATORIOS -->
+                <div x-show="activeTab === 'relatorios'" class="space-y-6" x-cloak>
+                    <!-- Welcome Header Dashboard Block -->
+                    <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-2xl border border-indigo-950 shadow-md">
+                        <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-1.5 text-left">
+                                <span class="text-[9px] bg-indigo-500/20 text-indigo-300 font-black uppercase tracking-widest px-2.5 py-1 rounded-md border border-indigo-500/30">
+                                    Centro de Inteligência Hospitalar
+                                </span>
+                                <h3 class="text-base font-extrabold tracking-tight">Painel Consolidado de Desempenho e Alocações</h3>
+                                <p class="text-xs text-indigo-200/90 max-w-xl">
+                                    Acesse métricas operacionais compiladas, dimensionamento de equipes de ambiência e indicadores de assepsia de escalas da instituição.
+                                </p>
+                            </div>
+                            <span class="text-right text-[11px] font-mono text-indigo-300 space-y-0.5 shrink-0 self-start md:self-auto">
+                                <strong class="block uppercase font-bold text-[9px] tracking-widest text-white">Competência Corrente</strong>
+                                <span class="bg-indigo-950/80 px-2.5 py-1 border border-indigo-900/50 rounded block mt-1 font-bold">Julho / 2026</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Preserved metrics block formatted inside stylized bento grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-3xs space-y-1.5 hover:border-indigo-200 transition-colors">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Total Horas Alocadas</span>
+                                <span class="p-1 text-[9px] font-bold text-indigo-600 bg-indigo-50 rounded">Tempo</span>
+                            </div>
+                            <p class="text-2xl font-black text-slate-850 font-mono">420 Horas</p>
+                            <span class="text-[10px] text-slate-400 block font-medium">Soma consolidada mensal da equipe</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-3xs space-y-1.5 hover:border-pink-200 transition-colors">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Atestados/Afastamentos</span>
+                                <span class="p-1 text-[9px] font-bold text-pink-600 bg-pink-50 rounded">Faltas</span>
+                            </div>
+                            <p class="text-2xl font-black text-pink-700 font-mono">1 Ocorrência</p>
+                            <span class="text-[10px] text-slate-400 block font-medium">Ocorrências registradas (Código: AT)</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-3xs space-y-1.5 hover:border-emerald-200 transition-colors">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Total de Folgas</span>
+                                <span class="p-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 rounded">Repouso</span>
+                            </div>
+                            <p class="text-2xl font-black text-emerald-700 font-mono">14 Dias</p>
+                            <span class="text-[10px] text-slate-400 block font-medium">Total de folgas de escala programadas</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-3xs space-y-1.5 hover:border-indigo-200 transition-colors">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Eficiência da Escala</span>
+                                <span class="p-1 text-[9px] font-bold text-indigo-600 bg-indigo-50 rounded">Qualidade</span>
+                            </div>
+                            <p class="text-2xl font-black text-emerald-600 font-mono">98.4%</p>
+                            <span class="text-[10px] text-slate-400 block font-medium">Índice corporativo de cobertura assistencial</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Split Row: Sector Distribution and Status KPI -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        <!-- Col 1: Sector allocations and employee distribution -->
+                        <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-3xs space-y-5">
+                            <div class="flex items-center justify-between border-b border-indigo-50 pb-3">
+                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="9"></rect>
+                                        <rect x="14" y="3" width="7" height="5"></rect>
+                                        <rect x="14" y="12" width="7" height="9"></rect>
+                                        <rect x="3" y="16" width="7" height="5"></rect>
+                                    </svg>
+                                    Distribuição de Colaboradores por Setor
+                                </h4>
+                                <span class="text-[10px] font-mono text-slate-400">Tempo de Execução Realizado</span>
+                            </div>
+
+                            <div class="divide-y divide-slate-100 space-y-3.5 pr-1 max-h-[350px] overflow-y-auto">
+                                <template x-for="sec in sectors" :key="sec.id">
+                                    <div class="pt-3.5 first:pt-0 flex flex-col gap-1.5">
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="font-extrabold text-slate-700 tracking-wide uppercase" x-text="sec.name"></span>
+                                            <span class="font-semibold text-indigo-650 font-mono" x-text="`${collaborators.filter(c => c.sectorId === sec.id).length} ativos`"></span>
+                                        </div>
+                                        
+                                        <!-- Custom animated dynamic bar using standard Alpine length ratio -->
+                                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                            <div 
+                                                class="bg-indigo-650 h-2 rounded-full transition-all" 
+                                                :style="`width: ${Math.min(100, Math.max(12, (collaborators.filter(c => c.sectorId === sec.id).length / Math.max(1, collaborators.length)) * 100))}%`"
+                                            ></div>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                            <span class="truncate max-w-[210px] block" x-text="`Gestor: ${sec.managerName}`"></span>
+                                            <span x-text="sec.description ? sec.description.slice(0, 48) + '...' : 'Sem notas de ambiência.'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Hospital operational metrics -->
+                        <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-3xs space-y-4">
+                            <div class="flex items-center justify-between border-b border-indigo-50 pb-3">
+                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                    </svg>
+                                    Estatuto dos Profissionais
+                                </h4>
+                                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Assistencial</span>
+                            </div>
+
+                            <div class="space-y-4 pt-1">
+                                <!-- Stat item list representing professional configurations -->
+                                <div class="space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-semibold text-slate-600">Funcionários Totais</span>
+                                        <strong class="text-slate-800 font-mono" x-text="collaborators.length"></strong>
+                                    </div>
+                                    <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-indigo-600" style="width: 100%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-semibold text-slate-600">Setores Hospitalares</span>
+                                        <strong class="text-slate-800 font-mono" x-text="sectors.length"></strong>
+                                    </div>
+                                    <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-emerald-500" style="width: 65%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-semibold text-slate-600">Atestado Médico Ativo</span>
+                                        <strong class="text-slate-855 font-mono">1 Profissional</strong>
+                                    </div>
+                                    <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-pink-500" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-indigo-50/50 rounded-xl p-3.5 border border-indigo-100 mt-4 leading-relaxed text-[11px] text-slate-500 text-left">
+                                <strong class="text-slate-800 font-bold block uppercase text-[9px] mb-0.5">Metodologia Assistencial</strong>
+                                <span>A análise estrutural de cobertura calcula a assepsia operacional ideal para manter o Hospital das Clínicas sem desfalques em plantões operacionais.</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 2.5 TAB LOGS DE ACESSO -->
+                <div x-show="activeTab === 'logs'" class="space-y-6" x-cloak>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-150">
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Registro de Tráfego & Logs de Ação</h3>
+                            <button @click="clearLogs()" class="px-2.5 py-1 text-red-500 hover:text-red-700 bg-red-50/50 hover:bg-red-100/50 font-bold uppercase text-[10px] rounded-lg">
+                                Limpar Logs
+                            </button>
+                        </div>
+
+                        <div class="overflow-y-auto max-h-[400px] space-y-3.5 pr-2">
+                            <template x-for="log in logs" :key="log.id">
+                                <div class="p-3 rounded-xl border bg-slate-50 border-slate-150 text-[11px] flex justify-between items-start">
+                                    <div class="space-y-1 fill-none">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-extrabold text-slate-800" x-text="log.userName"></span>
+                                            <span class="px-1 py-0.5 rounded text-[8px] font-black uppercase text-slate-105 bg-white border border-slate-200" x-text="log.userRole"></span>
+                                        </div>
+                                        <p class="text-slate-500 text-xs font-semibold" x-text="log.details"></p>
+                                    </div>
+                                    <span class="font-mono text-[9px] text-slate-400 text-right shrink-0 pl-4" x-text="formatTimestamp(log.timestamp)"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2.6 TAB PERFIL ADM (WITH COMPACT RESET FEATURE) -->
+                <div x-show="activeTab === 'perfil'" class="space-y-6" x-cloak>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-150 pb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Membros Administradores da Estações</h3>
+                                <p class="text-[11px] text-slate-400">Gerencie perfis simulados organizados e redefina credenciais de usuários corporativos com facilidade.</p>
+                            </div>
+                            <button
+                              x-show="currentAdmin?.role !== 'LEITOR'"
+                              @click="selectedUserToToggleId = ''; isUserInactivationModalOpen = true;"
+                              class="px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer shrink-0 transition-colors"
+                            >
+                                🚫 Inativação de Usuários
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <template x-for="admin in admins" :key="admin.id">
+                                <div class="p-5 rounded-2xl border transition-all flex flex-col justify-between"
+                                     :class="admin.active === false ? 'bg-slate-100/80 border-slate-200/60 opacity-75' : (admin.id === currentAdmin?.id ? 'bg-indigo-50/70 border-indigo-300 ring-4 ring-indigo-550/5' : 'bg-slate-55 border-slate-200 hover:border-slate-300')">
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-black border font-mono tracking-wider bg-slate-950/80"
+                                                  :class="admin.role === 'ADMIN' ? 'text-red-400 border-red-500/20' : (admin.role === 'GESTOR' ? 'text-emerald-400 border-emerald-500/20' : 'text-sky-400 border-sky-500/20')"
+                                                  x-text="admin.role"></span>
+                                            <template x-if="admin.active === false">
+                                                <span class="text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                                    Inativo 🔴
+                                                </span>
+                                            </template>
+                                            <template x-if="admin.active !== false && admin.id === currentAdmin?.id">
+                                                <span class="text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 px-2 py-0.5 rounded-full" x-cloak>
+                                                    Ativo agora 🟢
+                                                </span>
+                                            </template>
+                                        </div>
+
+                                        <div>
+                                            <h4 class="font-bold text-slate-800 text-sm line-clamp-1" x-text="admin.name"></h4>
+                                            <template x-if="editingEmailUserId === admin.id">
+                                                <div class="flex items-center gap-1.5 mt-1 pr-1" @click.stop="">
+                                                    <input
+                                                      type="email"
+                                                      x-model="tempEmailValue"
+                                                      class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-0.5 text-[11px] font-mono font-medium outline-hidden"
+                                                      placeholder="novo@email.com"
+                                                      @keydown.enter="updateUserEmail(admin.id, tempEmailValue); editingEmailUserId = null;"
+                                                      @keydown.escape="editingEmailUserId = null;"
+                                                    />
+                                                    <button
+                                                      @click="updateUserEmail(admin.id, tempEmailValue); editingEmailUserId = null;"
+                                                      class="bg-indigo-600 hover:bg-indigo-700 text-white rounded px-1.5 py-0.5 text-[11px] font-bold shrink-0 cursor-pointer"
+                                                      title="Salvar"
+                                                    >
+                                                      ✓
+                                                    </button>
+                                                    <button
+                                                      @click="editingEmailUserId = null;"
+                                                      class="bg-slate-200 hover:bg-slate-300 text-slate-700 rounded px-1.5 py-0.5 text-[11px] font-bold shrink-0 cursor-pointer"
+                                                      title="Cancelar"
+                                                    >
+                                                      ✕
+                                                    </button>
+                                                </div>
+                                            </template>
+                                            <template x-if="editingEmailUserId !== admin.id">
+                                                <span class="text-xs text-slate-400 flex items-center justify-between gap-1 font-mono mt-0.5 group w-full">
+                                                    <span class="flex items-center gap-1 truncate" :title="admin.email">
+                                                        <svg class="w-3.5 h-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                                        <span x-text="admin.email"></span>
+                                                    </span>
+                                                    <button
+                                                      x-show="currentAdmin?.role !== 'LEITOR'"
+                                                      @click.stop="editingEmailUserId = admin.id; tempEmailValue = admin.email;"
+                                                      class="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 p-1 rounded-md cursor-pointer transition-colors opacity-80 group-hover:opacity-100"
+                                                      title="Alterar E-mail"
+                                                    >
+                                                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                                    </button>
+                                                </span>
+                                            </template>
+                                            
+                                            <div class="mt-3 pt-2.5 border-t border-slate-200/60 flex flex-col gap-1.5 text-xs text-left">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-slate-400 font-bold">Usuário:</span>
+                                                    <span class="text-[10px] font-mono rounded select-none"
+                                                          :class="!admin.mustChangePassword ? 'font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5' : 'font-extrabold text-indigo-700 bg-indigo-50 px-1.5 py-0.5'"
+                                                          x-text="!admin.mustChangePassword ? '•••••••• (Ocultado) 🔒' : admin.username"></span>
+                                                </div>
+
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-slate-400 font-bold">Status:</span>
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
+                                                          :class="admin.active === false ? 'text-red-650 bg-red-50 border border-red-200/40 font-black' : (admin.mustChangePassword ? 'text-amber-600 bg-amber-50 border border-amber-200/40 animate-pulse' : 'text-emerald-600 bg-emerald-50 border border-emerald-200/40')"
+                                                          x-text="admin.active === false ? 'Acesso Inativo' : (admin.mustChangePassword ? 'Senha Provisória' : 'Senha Alterada')"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Actions button bar -->
+                                    <div class="border-t border-slate-200 pt-3 mt-4 space-y-3.5 w-full">
+                                        <div class="text-[11px] text-slate-500 flex items-center justify-between">
+                                            <span>Escopo de ação:</span>
+                                            <span class="font-bold text-slate-700" x-text="admin.role === 'ADMIN' ? 'Geral' : 'Local TI'"></span>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <template x-if="currentAdmin?.role === 'LEITOR'">
+                                                <div class="bg-slate-100/60 p-3 rounded-xl text-center text-[10px] text-slate-400 font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                                                    <span>🔒 Acesso de Leitor Bloqueado</span>
+                                                </div>
+                                            </template>
+                                            
+                                            <template x-if="currentAdmin?.role !== 'LEITOR' && admin.active === false">
+                                                <div class="space-y-2">
+                                                    <button
+                                                      @click="toggleUserActive(admin.id)"
+                                                      class="w-full py-2.5 text-xs font-black uppercase tracking-wider rounded-xl cursor-pointer text-center bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs border border-emerald-600 hover:border-emerald-500 transition-colors flex items-center justify-center gap-1.5"
+                                                    >
+                                                      <span>🔓 Habilitar Usuário</span>
+                                                    </button>
+                                                    <button
+                                                      @click="resetPasswordTargetUser = admin; customResetPasswordInput = ''; customResetMustChangePassword = true; resetModalError = ''; isResetPasswordModalOpen = true;"
+                                                      class="w-full py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-xl cursor-pointer text-center bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 transition-all font-semibold"
+                                                      title="Definir nova senha para este usuário"
+                                                    >
+                                                      Resetar Senha
+                                                    </button>
+                                                </div>
+                                            </template>
+                                            
+                                            <template x-if="currentAdmin?.role !== 'LEITOR' && admin.active !== false">
+                                                <div class="space-y-2">
+                                                    <button
+                                                      @click="resetPasswordTargetUser = admin; customResetPasswordInput = ''; customResetMustChangePassword = true; resetModalError = ''; isResetPasswordModalOpen = true;"
+                                                      class="w-full py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer text-center bg-slate-100 hover:bg-amber-100 hover:border-amber-200 hover:text-amber-800 border border-transparent text-slate-600 transition-all font-semibold"
+                                                    >
+                                                        Resetar Senha
+                                                    </button>
+
+                                                    <button
+                                                      @click="if (admin.id === currentAdmin?.id) { alert('Você não pode inativar seu próprio perfil ativo.'); return; } toggleUserActive(admin.id)"
+                                                      class="w-full py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-xl cursor-pointer text-center border transition-all bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                                                      x-text="'🚫 Inativar Acesso'"
+                                                    >
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- ----------------------------------------------------
+       3. MODAL WINDOWS & DISALOGS
+       ---------------------------------------------------- -->
+
+    <!-- Modal 3.1: Password Modal (Required Password Protection Setup Switching Admins) -->
+    <div x-show="isPasswordModalOpen" x-transition x-cloak class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-900 border border-slate-200 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative"
+             @click.away="isPasswordModalOpen = false">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-indigo-50 p-2.5 rounded-2xl text-indigo-600">
+                        <i data-lucide="lock" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold uppercase tracking-wider">Acesso Protegido</h3>
+                        <p class="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wide">Sessão: <strong class="text-indigo-650" x-text="targetSwitchAdmin?.name"></strong></p>
+                    </div>
+                </div>
+
+                <form @submit.prevent="verifyAndSwitchAdmin()" class="space-y-4">
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest pl-1 block mb-1">Digite a senha pessoal deste usuário</label>
+                        <input
+                          type="password"
+                          x-model="switchPasswordInput"
+                          placeholder="Digite a senha..."
+                          class="w-full px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/25"
+                          required
+                        />
+                    </div>
+
+                    <div x-show="switchModalError"
+                         class="p-2.5 bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs flex items-center gap-2 font-medium" x-cloak>
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                        <span x-text="switchModalError"></span>
+                    </div>
+
+                    <p x-show="targetSwitchAdmin?.mustChangePassword" class="text-[10px] text-indigo-600 font-bold px-3 py-1 bg-indigo-50/50 rounded-xl leading-relaxed" x-cloak>
+                        Dica: Use a senha <strong class="underline text-indigo-700" x-text="targetSwitchAdmin?.password"></strong> para testar a simulação imediata.
+                    </p>
+                    <p x-show="targetSwitchAdmin && !targetSwitchAdmin.mustChangePassword" class="text-[10px] text-emerald-600 font-bold px-3 py-1 bg-emerald-50 rounded-xl leading-relaxed" x-cloak>
+                        🔒 Usuário já realizou primeiro acesso. Senha secreta configurada.
+                    </p>
+
+                    <div class="flex gap-2">
+                        <button
+                          type="button"
+                          @click="isPasswordModalOpen = false"
+                          class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
+                        >
+                            Voltar
+                        </button>
+                        <button
+                          type="submit"
+                          class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
+                        >
+                            Verificar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3.5: Custom Password Reset Modal (Várias Opções) -->
+    <div x-show="isResetPasswordModalOpen" x-transition x-cloak class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-800 border border-slate-100 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative"
+             @click.away="isResetPasswordModalOpen = false">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                    <div class="bg-indigo-50 p-2.5 rounded-2xl text-indigo-600">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Definir Nova Senha</h3>
+                        <p class="text-[11px] text-slate-500">Insira a nova senha de login para este profissional</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 py-1 text-xs">
+                    <div>
+                        <span class="text-[10px] uppercase text-slate-400 font-bold block">Profissional selecionado</span>
+                        <span class="text-sm font-extrabold text-slate-800" x-text="resetPasswordTargetUser?.name"></span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded ml-2 font-mono bg-slate-100 text-slate-600 border border-slate-200" x-text="resetPasswordTargetUser?.role"></span>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] uppercase text-slate-400 font-extrabold block">Senha Nova de Acesso:</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: novaSenha123"
+                          x-model="customResetPasswordInput"
+                          class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none font-bold text-slate-850"
+                          @input="resetModalError = ''"
+                        />
+                        <p x-show="resetModalError" class="text-red-500 text-[10px] font-bold" x-text="resetModalError" x-cloak></p>
+                        <p class="text-[10px] text-slate-400 leading-normal">
+                          A senha provisória padrão do sistema para novos perfis é <strong>1234</strong>.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-205">
+                        <input
+                          type="checkbox"
+                          id="alpine-force-change-flag"
+                          x-model="customResetMustChangePassword"
+                          class="w-4 h-4 text-indigo-600 border-slate-200 rounded-md focus:ring-indigo-500 cursor-pointer"
+                        />
+                        <label for="alpine-force-change-flag" class="text-xs text-slate-600 font-medium select-none cursor-pointer">
+                          Exigir alteração de senha obrigatória no próximo login.
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-150">
+                    <button
+                      type="button"
+                      @click="isResetPasswordModalOpen = false"
+                      class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs uppercase cursor-pointer"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      @click="
+                        if (!customResetPasswordInput.trim()) { resetModalError = 'Por favor, digite uma senha nova.'; return; }
+                        if (customResetPasswordInput.length < 4) { resetModalError = 'A senha nova deve possuir no mínimo 4 caracteres.'; return; }
+                        if (customResetPasswordInput === '1234') { resetModalError = 'A senha provisória padrão (1234) não pode ser inserida aqui.'; return; }
+                        resetUserPassword(resetPasswordTargetUser.id, customResetPasswordInput, customResetMustChangePassword);
+                        isResetPasswordModalOpen = false;
+                      "
+                      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs uppercase cursor-pointer shadow-3xs"
+                    >
+                        Definir Senha
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3.6: Alpine Inactivation Selection Dropdown Modal -->
+    <div x-show="isUserInactivationModalOpen" x-transition x-cloak class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full border border-slate-100 shadow-2xl relative space-y-4 text-slate-850"
+             @click.away="isUserInactivationModalOpen = false">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                <div class="bg-red-50 p-2.5 text-red-600 rounded-2xl">
+                    <i data-lucide="user-x" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Inativação de Usuários</h3>
+                    <p class="text-[11px] text-slate-500">Selecione qual usuário corporativo deseja inativar/reativar</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 py-1 text-xs">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] uppercase text-slate-400 font-extrabold block">Escolha o Colaborador:</label>
+                    <select
+                      x-model="selectedUserToToggleId"
+                      class="w-full bg-slate-50 border border-slate-205 text-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold font-sans outline-none cursor-pointer"
+                    >
+                        <option value="" disabled>Selecione um usuário...</option>
+                        <template x-for="u in admins" :key="u.id">
+                            <option :value="u.id" x-text="u.name + ' (' + u.role + ') — ' + (u.active === false ? '🛑 INATIVO' : '🟢 ATIVO')"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <template x-if="selectedUserToToggleId">
+                    <div class="rounded-2xl p-3.5 bg-slate-50 border border-slate-150 text-xs space-y-2.5">
+                        <div class="flex justify-between items-center bg-transparent">
+                            <span class="text-slate-400 font-bold">E-mail Corporativo:</span>
+                            <span class="font-mono text-slate-600 font-bold" x-text="admins.find(a => a.id === selectedUserToToggleId)?.email"></span>
+                        </div>
+                        <div class="flex justify-between items-center bg-transparent">
+                            <span class="text-slate-400 font-bold">Papel Sistêmico:</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black border font-mono"
+                                  :class="admins.find(a => a.id === selectedUserToToggleId)?.role === 'ADMIN' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'"
+                                  x-text="admins.find(a => a.id === selectedUserToToggleId)?.role"></span>
+                        </div>
+                        <div class="flex justify-between items-center bg-transparent">
+                            <span class="text-slate-400 font-bold">Acesso Atual:</span>
+                            <span class="font-black uppercase tracking-wider text-[10px]"
+                                  :class="admins.find(a => a.id === selectedUserToToggleId)?.active === false ? 'text-red-650' : 'text-emerald-700'"
+                                  x-text="admins.find(a => a.id === selectedUserToToggleId)?.active === false ? 'Bloqueado (Inativo) 🛑' : 'Liberado (Ativo) 🟢'"></span>
+                        </div>
+                        <p x-show="selectedUserToToggleId === currentAdmin?.id" class="text-[10px] text-amber-600 font-bold bg-amber-50 p-2 rounded-lg border border-amber-200/50 leading-normal" x-cloak>
+                            Atenção: Você não pode inativar a si mesmo (o profissional autenticado na sessão ativa atual).
+                        </p>
+                    </div>
+                </template>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  @click="isUserInactivationModalOpen = false"
+                  class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs uppercase cursor-pointer"
+                >
+                    Voltar
+                </button>
+                
+                <template x-if="selectedUserToToggleId && selectedUserToToggleId !== currentAdmin?.id">
+                    <button
+                      type="button"
+                      @click="toggleUserActive(selectedUserToToggleId); isUserInactivationModalOpen = false;"
+                      class="px-4 py-2 text-white font-bold rounded-xl text-xs uppercase cursor-pointer shadow-3xs"
+                      :class="admins.find(a => a.id === selectedUserToToggleId)?.active === false ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-red-600 hover:bg-red-500'"
+                      x-text="admins.find(a => a.id === selectedUserToToggleId)?.active === false ? 'Reativar Usuário' : 'Inativar Usuário'"
+                    >
+                    </button>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3.2: Interactive Cell Popover Editor -->
+    <div x-show="isCellModalOpen" x-transition x-cloak class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-900 border border-slate-200 rounded-2xl w-full max-w-sm overflow-hidden shadow-xl"
+             @click.away="isCellModalOpen = false">
+            <div class="p-5 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div>
+                        <h3 class="text-xs font-black uppercase tracking-widest text-slate-400">Alterar Escala de Plantão</h3>
+                        <p class="font-extrabold text-slate-800 text-[11px] mt-0.5" x-text="getCellEditorLabel()"></p>
+                    </div>
+                    <button @click="isCellModalOpen = false" class="text-slate-400 hover:text-slate-600">
+                        <i data-lucide="close" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 max-h-[220px] overflow-y-auto">
+                    <template x-for="leg in legends" :key="leg.code">
+                        <button @click="updateCellAndClose(leg.code)"
+                                class="p-2 border rounded-xl flex flex-col items-center justify-center gap-1 hover:bg-indigo-50/50 hover:border-indigo-200 transition-all cursor-pointer">
+                            <span class="px-2 py-0.5 rounded font-black text-[10px]"
+                                  :class="leg.color + ' ' + leg.textColor"
+                                  x-text="leg.code"></span>
+                            <span class="text-[8px] text-slate-400 text-center font-bold font-sans line-clamp-1" x-text="leg.label"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3.3: Add Collaborator -->
+    <div x-show="isAddCollabOpen" x-transition x-cloak class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-900 border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl"
+             @click.away="isAddCollabOpen = false">
+            <div class="p-6 space-y-4">
+                <div class="border-b border-slate-100 pb-2 flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Cadastrar Novo Profissional</h3>
+                    <button @click="isAddCollabOpen = false" class="text-slate-450 hover:text-slate-600">fechar</button>
+                </div>
+
+                <form @submit.prevent="submitAddCollaborator()" class="space-y-4 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="font-bold text-slate-500 pl-1 mb-1 block">Nome Completo</label>
+                            <input type="text" x-model="collabName" placeholder="Ex: CARLOS ALBERTO" class="w-full px-3 py-2 border border-slate-200 rounded-xl" required />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-500 pl-1 mb-1 block">Matrícula</label>
+                            <input type="text" x-model="collabMatricula" placeholder="Ex: 84920" class="w-full px-3 py-2 border border-slate-200 rounded-xl" required />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-500 pl-1 mb-1 block">Conselho</label>
+                            <input type="text" x-model="collabConselho" placeholder="Ex: COREN-MG" class="w-full px-3 py-2 border border-slate-200 rounded-xl" />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-500 pl-1 mb-1 block">Cargo / Função</label>
+                            <input type="text" x-model="collabFuncao" placeholder="TÉCNICO DE INFORMATICA" class="w-full px-3 py-2 border border-slate-200 rounded-xl" required />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-500 pl-1 mb-1 block">Turno</label>
+                            <input type="text" x-model="collabTurno" placeholder="M/T ou SD" class="w-full px-3 py-2 border border-slate-200 rounded-xl" required />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-500 pl-1 mb-1 block">Jornada</label>
+                            <input type="text" x-model="collabJornada" placeholder="40H ou 12X36" class="w-full px-3 py-2 border border-slate-200 rounded-xl" required />
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2 border-t border-slate-100">
+                        <button type="button" @click="isAddCollabOpen = false" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold uppercase transition-all">Cancelar</button>
+                        <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold uppercase transition-all">Cadastrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3.4: Add Sector -->
+    <div x-show="isAddSectorOpen" x-transition x-cloak class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-900 border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl"
+             @click.away="isAddSectorOpen = false">
+            <div class="p-6 space-y-4">
+                <div class="border-b border-slate-100 pb-2 flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Cadastrar Novo Setor</h3>
+                    <button @click="isAddSectorOpen = false" class="text-slate-450 hover:text-slate-600">fechar</button>
+                </div>
+
+                <form @submit.prevent="submitAddSector()" class="space-y-4 text-xs font-sans">
+                    <div class="space-y-1.5 text-left">
+                        <div>
+                            <label class="font-bold text-slate-550 pl-1 mb-1 block">Nome do Setor *</label>
+                            <input type="text" x-model="sectorName" placeholder="Ex: UTI GERAL, CLÍNICA MÉDICA" class="w-full px-3 py-2 border border-slate-250 bg-white text-slate-800 rounded-xl uppercase" required />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-550 pl-1 mb-1 block">Coordenador / Gestor *</label>
+                            <input type="text" x-model="sectorManagerName" placeholder="Ex: RODRIGO FIGUEIREDO" class="w-full px-3 py-2 border border-slate-250 bg-white text-slate-800 rounded-xl uppercase" required />
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-550 pl-1 mb-1 block">Descrição / Ambiência</label>
+                            <input type="text" x-model="sectorDescription" placeholder="Diga brevemente sobre o escopo do setor..." class="w-full px-3 py-2 border border-slate-250 bg-white text-slate-800 rounded-xl" />
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2 border-t border-slate-100">
+                        <button type="button" @click="isAddSectorOpen = false" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold uppercase transition-all">Cancelar</button>
+                        <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold uppercase transition-all">Confirmar Cadastro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- APP LOGIC -->
+    <script>
+        function regisaApp() {
+            return {
+                // Main Authenticated state
+                isLoggedIn: false,
+                activeTab: 'escala',
+
+                // Login states
+                usernameInput: '',
+                passwordInput: '',
+                showPassword: false,
+                loginError: '',
+                pendingUser: null,
+                showHelper: false,
+
+                // Access Password Change States
+                newPassword: '',
+                confirmPassword: '',
+                showNewPassword: false,
+                changeError: '',
+                changeSuccess: false,
+
+                // Grid Calendar State
+                selectedYear: 2026,
+                selectedMonth: 6,
+                searchQuery: '',
+
+                // Shift Cell update state
+                isCellModalOpen: false,
+                editingCellCollabId: '',
+                editingCellDay: 0,
+
+                // Switch Profile protecting
+                isPasswordModalOpen: false,
+                targetSwitchAdmin: null,
+                switchPasswordInput: '',
+                switchModalError: '',
+
+                // Reset password custom states
+                isResetPasswordModalOpen: false,
+                resetPasswordTargetUser: null,
+                customResetPasswordInput: '',
+                customResetMustChangePassword: true,
+                resetModalError: '',
+
+                // User Activation/Inactivation states
+                isUserInactivationModalOpen: false,
+                selectedUserToToggleId: '',
+
+                // Email edit states
+                editingEmailUserId: null,
+                tempEmailValue: '',
+
+                // modal add states
+                isAddCollabOpen: false,
+                collabName: '',
+                collabMatricula: '',
+                collabConselho: '',
+                collabFuncao: 'TÉCNICO DE INFORMÁTICA',
+                collabTurno: 'M/T',
+                collabJornada: '40H',
+
+                // modal add sector states
+                isAddSectorOpen: false,
+                sectorName: '',
+                sectorManagerName: '',
+                sectorDescription: '',
+
+                // Dynamic stored state variables
+                darkMode: localStorage.getItem('scale_dark_mode') === 'true',
+                admins: [],
+                currentAdmin: null,
+                sectors: [],
+                collaborators: [],
+                schedule: {},
+                logs: [],
+                selectedSectorId: 'sec-info',
+
+                // legends dictionary
+                legends: [
+                    { code: 'M/T', label: 'Manhã/Tarde', color: 'bg-white border-slate-300', textColor: 'text-slate-800' },
+                    { code: 'SD', label: 'Plantão Diurno', color: 'bg-indigo-50 border-indigo-200', textColor: 'text-indigo-800 font-medium' },
+                    { code: 'SN', label: 'Plantão Noturno', color: 'bg-violet-100 border-violet-200', textColor: 'text-violet-900 font-medium' },
+                    { code: '24H', label: 'Plantão 24h', color: 'bg-blue-100 border-blue-200', textColor: 'text-blue-900 font-semibold' },
+                    { code: 'FG', label: 'Folga', color: 'bg-red-100 border-red-200', textColor: 'text-red-800 font-semibold' },
+                    { code: 'RS', label: 'Repouso Semanal', color: 'bg-emerald-100 border-emerald-200', textColor: 'text-emerald-800' },
+                    { code: 'FR', label: 'Férias', color: 'bg-amber-100 border-amber-200', textColor: 'text-amber-800 font-semibold' },
+                    { code: 'AT', label: 'Atestado', color: 'bg-pink-100 border-pink-200', textColor: 'text-pink-800 font-bold' },
+                    { code: 'F', label: 'Falta', color: 'bg-rose-200 border-rose-300', textColor: 'text-rose-900 font-bold' },
+                    { code: 'LM', label: 'Licença Maternidade', color: 'bg-purple-100 border-purple-200', textColor: 'text-purple-800' },
+                    { code: 'BH', label: 'Banco de Horas', color: 'bg-sky-100 border-sky-200', textColor: 'text-sky-800' },
+                    { code: 'FE', label: 'Feriado', color: 'bg-yellow-105 border-yellow-200', textColor: 'text-yellow-800' }
+                ],
+
+                initApp() {
+                    // Try to restore from LocalStorage
+                    const savedAdmins = localStorage.getItem('scale_admins_v4');
+                    if (savedAdmins) {
+                        this.admins = JSON.parse(savedAdmins);
+                    } else {
+                        this.admins = [
+                            { id: 'admin-oliveira', name: 'Regi Oliveira', email: 'oliveira30regi@gmail.com', role: 'ADMIN', username: 'regi', password: '1234', mustChangePassword: true },
+                            { id: 'admin-rodrigo', name: 'Rodrigo Correa', email: 'rodrigo.correa@hospital.gov', role: 'GESTOR', sectorId: 'sec-info', username: 'rodrigo', password: '1234', mustChangePassword: true },
+                            { id: 'user-maria', name: 'MARIA EDUARDA PASSOS NABORFAZAN', email: 'maria.naborfazan@hospital.gov', role: 'LEITOR', username: 'maria', password: '1234', mustChangePassword: true },
+                            { id: 'user-agenor', name: 'AGENOR FIGUEREDO JUNIOR', email: 'agenor.junior@hospital.gov', role: 'LEITOR', username: 'agenor', password: '1234', mustChangePassword: true }
+                        ];
+                        localStorage.setItem('scale_admins_v4', JSON.stringify(this.admins));
+                    }
+
+                    // Restore proper roles for admins so their actions actually persist instead of getting overridden to LEITOR
+                    this.admins.forEach(a => {
+                        if (a.id === 'admin-oliveira') a.role = 'ADMIN';
+                        if (a.id === 'admin-rodrigo') a.role = 'GESTOR';
+                    });
+                    localStorage.setItem('scale_admins_v4', JSON.stringify(this.admins));
+
+                    const savedCurrentAdmin = localStorage.getItem('scale_current_admin');
+                    if (savedCurrentAdmin) {
+                        this.currentAdmin = JSON.parse(savedCurrentAdmin);
+                    } else {
+                        this.currentAdmin = this.admins[0];
+                    }
+                    if (this.currentAdmin) {
+                        if (this.currentAdmin.id === 'admin-oliveira') this.currentAdmin.role = 'ADMIN';
+                        if (this.currentAdmin.id === 'admin-rodrigo') this.currentAdmin.role = 'GESTOR';
+                        localStorage.setItem('scale_current_admin', JSON.stringify(this.currentAdmin));
+                    }
+
+                    this.isLoggedIn = localStorage.getItem('scale_is_logged_in') === 'true';
+
+                    // Apply dark mode on initial load
+                    if (this.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+
+                    // Initial Sectors
+                    this.sectors = [
+                        { id: 'sec-info', name: 'INFORMÁTICA (HMPW)', managerName: 'RODRIGO CORREA DE FIGUEIREDO', description: 'Suporte de TI local, rede e desenvolvimento.' }
+                    ];
+
+                    // Initial Collaborators
+                    this.collaborators = [
+                        { id: 'col-rod', matricula: '22995', conselho: 'MATECH-32', name: 'RODRIGO CORREA DE FIGUEIREDO', turno: 'M/T', funcao: 'COORDENADOR DE TI', jornada: '40H', sectorId: 'sec-info' },
+                        { id: 'col-reg', matricula: '076832', conselho: 'S/ CONSELHO', name: 'REGINALDO SILVA DE OLIVEIRA', turno: 'SD1', funcao: 'TÉCNICO DE INFORMÁTICA', jornada: '12X36', sectorId: 'sec-info' },
+                        { id: 'col-age', matricula: '65470', conselho: 'S/ CONSELHO', name: 'AGENOR FIGUEREDO JUNIOR', turno: 'SD2', funcao: 'TÉCNICO DE INFORMÁTICA', jornada: '12X36', sectorId: 'sec-info' },
+                        { id: 'col-maria', matricula: '74967', conselho: 'S/ CONSELHO', name: 'MARIA EDUARDA PASSOS NABORFAZAN', turno: 'M/T', funcao: 'JOVEM APRENDIZ', jornada: '30H', sectorId: 'sec-info' }
+                    ];
+
+                    // Prepopulate Schedules
+                    const savedSchedule = localStorage.getItem('scale_calendar_grid');
+                    if (savedSchedule) {
+                        this.schedule = JSON.parse(savedSchedule);
+                    } else {
+                        // Generate mock values
+                        this.collaborators.forEach(col => {
+                            for (let day = 1; day <= 31; day++) {
+                                const key = `${col.id}_2026_6_${day}`;
+                                if (col.id === 'col-rod' || col.id === 'col-maria') {
+                                    const date = new Date(2026, 5, day);
+                                    this.schedule[key] = (date.getDay() === 0 || date.getDay() === 6) ? 'FG' : 'M/T';
+                                } else if (col.id === 'col-reg') {
+                                    this.schedule[key] = (day % 2 !== 0) ? 'SD' : 'FG';
+                                } else if (col.id === 'col-age') {
+                                    this.schedule[key] = (day % 2 === 0) ? 'SD' : 'FG';
+                                }
+                            }
+                        });
+                        this.schedule[`col-rod_2026_6_16`] = 'AT';
+                        this.schedule[`col-maria_2026_6_23`] = 'FR';
+                        localStorage.setItem('scale_calendar_grid', JSON.stringify(this.schedule));
+                    }
+
+                    // Initial Logs
+                    const savedLogs = localStorage.getItem('scale_logs_v1');
+                    if (savedLogs) {
+                        this.logs = JSON.parse(savedLogs);
+                    } else {
+                        this.logs = [
+                            { id: 'log-1', timestamp: new Date().toISOString(), userName: 'System', userRole: 'ADMIN', details: 'Banco de dados ReGiSA iniciado.' }
+                        ];
+                        localStorage.setItem('scale_logs_v1', JSON.stringify(this.logs));
+                    }
+
+                    // Run icons
+                    setTimeout(() => { lucide.createIcons(); }, 100);
+                },
+
+                handleLogin() {
+                    this.loginError = '';
+                    const username = this.usernameInput.trim().toLowerCase();
+                    const password = this.passwordInput.trim();
+
+                    const matched = this.admins.find(u => u.username.toLowerCase() === username || u.email.toLowerCase() === username);
+                    if (!matched) {
+                        this.loginError = 'Usuário ou e-mail corporativo não encontrado.';
+                        return;
+                    }
+
+                    if (matched.active === false) {
+                        this.loginError = 'Sua conta corporativa está INATIVA no sistema. Contate a coordenação.';
+                        return;
+                    }
+
+                    if (password !== matched.password) {
+                        this.loginError = 'Senha corporativa incorreta.';
+                        return;
+                    }
+
+                    if (matched.mustChangePassword) {
+                        this.pendingUser = matched;
+                        this.newPassword = '';
+                        this.confirmPassword = '';
+                    } else {
+                        this.currentAdmin = matched;
+                        this.isLoggedIn = true;
+                        this.activeTab = 'colaboradores';
+                        localStorage.setItem('scale_is_logged_in', 'true');
+                        localStorage.setItem('scale_current_admin', JSON.stringify(matched));
+                        this.logAction('LOGIN', `Fez login de sessão corporativa com sucesso.`);
+                    }
+                    setTimeout(() => { lucide.createIcons(); }, 50);
+                },
+
+                handleChangePassword() {
+                    this.changeError = '';
+                    if (this.newPassword.length < 5) {
+                        this.changeError = 'A nova senha deve possuir no mínimo 5 caracteres.';
+                        return;
+                    }
+                    if (this.newPassword === '1234') {
+                        this.changeError = 'A senha nova não pode ser a senha padrão provisória.';
+                        return;
+                    }
+                    if (this.newPassword !== this.confirmPassword) {
+                        this.changeError = 'As senhas digitadas não coincidem.';
+                        return;
+                    }
+
+                    // update state
+                    const userId = this.pendingUser.id;
+                    this.admins = this.admins.map(a => {
+                        if (a.id === userId) {
+                            return { ...a, password: this.newPassword, mustChangePassword: false };
+                        }
+                        return a;
+                    });
+                    localStorage.setItem('scale_admins_v4', JSON.stringify(this.admins));
+
+                    const updatedUser = this.admins.find(a => a.id === userId);
+                    this.changeSuccess = true;
+
+                    setTimeout(() => {
+                        this.currentAdmin = updatedUser;
+                        this.isLoggedIn = true;
+                        this.activeTab = 'colaboradores';
+                        this.pendingUser = null;
+                        this.changeSuccess = false;
+                        localStorage.setItem('scale_is_logged_in', 'true');
+                        localStorage.setItem('scale_current_admin', JSON.stringify(updatedUser));
+                        this.logAction('LOGIN', `Registrou sua primeira senha de segurança corporativa com sucesso.`);
+                        lucide.createIcons();
+                    }, 1500);
+                },
+
+                handleLogout() {
+                    this.isLoggedIn = false;
+                    localStorage.setItem('scale_is_logged_in', 'false');
+                    this.logAction('LOGIN', `Fez logout da sessão.`);
+                },
+
+                requestSwitchAdminDirect(admin) {
+                    if (admin.active === false) {
+                        alert(`O perfil de ${admin.name} está inativo no momento. Reative seu acesso antes de simular.`);
+                        return;
+                    }
+                    // Check if they need to change password
+                    if (admin.mustChangePassword) {
+                        if (confirm(`O usuário ${admin.name} ainda precisa registrar sua senha definitiva de primeiro acesso. Deseja sair do perfil atual e ir para a tela de login para configurá-lo?`)) {
+                            this.handleLogout();
+                        }
+                        return;
+                    }
+                    this.targetSwitchAdmin = admin;
+                    this.switchPasswordInput = '';
+                    this.switchModalError = '';
+                    this.isPasswordModalOpen = true;
+                    setTimeout(() => { lucide.createIcons(); }, 50);
+                },
+
+                verifyAndSwitchAdmin() {
+                    this.switchModalError = '';
+                    if (this.switchPasswordInput !== this.targetSwitchAdmin.password) {
+                        this.switchModalError = 'Senha corporativa incorreta para este usuário.';
+                        return;
+                    }
+                    // Success switch
+                    this.currentAdmin = this.targetSwitchAdmin;
+                    this.isPasswordModalOpen = false;
+                    localStorage.setItem('scale_current_admin', JSON.stringify(this.currentAdmin));
+                    this.logAction('LOGIN', `Simulou acesso para o perfil do usuário ${this.currentAdmin.name}.`);
+                    lucide.createIcons();
+                },
+
+                handleSwitchAdminSelect(e) {
+                    const adminId = e.target.value;
+                    const found = this.admins.find(a => a.id === adminId);
+                    if (found) {
+                        this.requestSwitchAdminDirect(found);
+                    }
+                },
+
+                resetUserPassword(userId, customPassword, forceChange) {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    const matched = this.admins.find(a => a.id === userId);
+                    if (!matched) return;
+
+                    const passwordToSet = customPassword || '1234';
+                    const mustChange = forceChange !== undefined ? forceChange : true;
+
+                    this.admins = this.admins.map(a => {
+                        if (a.id === userId) {
+                            return { ...a, password: passwordToSet, mustChangePassword: mustChange };
+                        }
+                        return a;
+                    });
+                    localStorage.setItem('scale_admins_v4', JSON.stringify(this.admins));
+                    this.logAction('WRITE', `Definiu nova senha para o usuário ${matched.name} (${matched.role}) corporativo, com alteração obrigatória definida como: ${mustChange ? 'Sim' : 'Não'}.`);
+                    alert(`A senha de ${matched.name} foi gravada com sucesso.`);
+
+                    // If user resets their own password with forceChange, force logout
+                    if (this.currentAdmin.id === userId && mustChange) {
+                        this.handleLogout();
+                    }
+                },
+
+                toggleUserActive(userId) {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    const matched = this.admins.find(a => a.id === userId);
+                    if (!matched) return;
+
+                    if (userId === this.currentAdmin.id) {
+                        alert("Você não pode inativar seu próprio perfil de simulação activa.");
+                        return;
+                    }
+
+                    const nextActiveState = (matched.active === false) ? true : false;
+                    const actionText = nextActiveState ? 'Ativou' : 'Inativou';
+
+                    this.admins = this.admins.map(a => {
+                        if (a.id === userId) {
+                            return { ...a, active: nextActiveState };
+                        }
+                        return a;
+                    });
+                    localStorage.setItem('scale_admins_v4', JSON.stringify(this.admins));
+                    this.logAction('WRITE', `${actionText} o cadastro e acesso do usuário ${matched.name} (${matched.role}) no sistema.`);
+                    alert(`Usuário ${matched.name} foi ${nextActiveState ? 'ATIVADO' : 'INATIVADO'} com sucesso.`);
+                },
+
+                updateUserEmail(userId, newEmail) {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    const matched = this.admins.find(a => a.id === userId);
+                    if (!matched) return;
+
+                    if (!newEmail.trim()) {
+                        alert("O e-mail não pode ser vazio.");
+                        return;
+                    }
+
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(newEmail)) {
+                        alert("Por favor, insira um e-mail válido.");
+                        return;
+                    }
+
+                    const oldEmail = matched.email;
+
+                    this.admins = this.admins.map(a => {
+                        if (a.id === userId) {
+                            return { ...a, email: newEmail };
+                        }
+                        return a;
+                    });
+                    localStorage.setItem('scale_admins_v4', JSON.stringify(this.admins));
+
+                    if (this.currentAdmin && this.currentAdmin.id === userId) {
+                        this.currentAdmin.email = newEmail;
+                        localStorage.setItem('scale_current_admin', JSON.stringify(this.currentAdmin));
+                    }
+
+                    this.logAction('WRITE', `Alterou o e-mail de ${matched.name} (${matched.role}) corporativo de "${oldEmail}" para "${newEmail}".`);
+                    alert(`O e-mail de ${matched.name} foi alterado com sucesso.`);
+                },
+
+                // Calendar Methods
+                getDaysInMonth(year, month) {
+                    return new Date(year, month, 0).getDate();
+                },
+
+                daysArrayObj() {
+                    const days = this.getDaysInMonth(this.selectedYear, this.selectedMonth);
+                    const list = [];
+                    const dayNames = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
+                    for (let d = 1; d <= days; d++) {
+                        const date = new Date(this.selectedYear, this.selectedMonth - 1, d);
+                        const isWe = date.getDay() === 0 || date.getDay() === 6;
+                        list.push({
+                            day: d,
+                            dayName: dayNames[date.getDay()],
+                            isWeekend: isWe
+                        });
+                    }
+                    return list;
+                },
+
+                prevMonth() {
+                    if (this.selectedMonth === 1) {
+                        this.selectedMonth = 12;
+                        this.selectedYear--;
+                    } else {
+                        this.selectedMonth--;
+                    }
+                },
+
+                nextMonth() {
+                    if (this.selectedMonth === 12) {
+                        this.selectedMonth = 1;
+                        this.selectedYear++;
+                    } else {
+                        this.selectedMonth++;
+                    }
+                },
+
+                getMonthNameString(m) {
+                    const names = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+                    return names[m - 1];
+                },
+
+                // Filters
+                filteredCollaborators() {
+                    return this.collaborators.filter(c => {
+                        const search = this.searchQuery.toLowerCase();
+                        const matchSearch = c.name.toLowerCase().includes(search) || c.matricula.includes(search) || c.funcao.toLowerCase().includes(search);
+                        return c.sectorId === this.selectedSectorId && matchSearch;
+                    });
+                },
+
+                getSectorName(secId) {
+                    const sec = this.sectors.find(s => s.id === secId);
+                    return sec ? sec.name : 'Geral';
+                },
+
+                getScheduleValue(collabId, day) {
+                    const key = `${collabId}_${this.selectedYear}_${this.selectedMonth}_${day}`;
+                    return this.schedule[key] || '';
+                },
+
+                getCellStylesDynamic(collabId, day, isWeekend) {
+                    const val = this.getScheduleValue(collabId, day);
+                    if (!val) {
+                        return isWeekend ? 'bg-red-50 text-red-100 hover:bg-indigo-50' : 'bg-slate-50 text-slate-100 hover:bg-indigo-50';
+                    }
+                    const legend = this.legends.find(l => l.code === val);
+                    return legend ? `${legend.color} ${legend.textColor}` : 'bg-slate-50 border border-slate-200';
+                },
+
+                // Edit Popover Cell
+                openCellEditor(collabId, day) {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    // Check edit permissions
+                    const canEdit = this.currentAdmin.role === 'ADMIN' || (this.currentAdmin.role === 'GESTOR' && this.currentAdmin.sectorId === this.selectedSectorId);
+                    if (!canEdit) {
+                        alert('Você não tem permissão para editar escalas nesse setor!');
+                        return;
+                    }
+                    this.editingCellCollabId = collabId;
+                    this.editingCellDay = day;
+                    this.isCellModalOpen = true;
+                },
+
+                getCellEditorLabel() {
+                    const collab = this.collaborators.find(c => c.id === this.editingCellCollabId);
+                    return collab ? `${collab.name} - Dia ${this.editingCellDay} de ${this.getMonthNameString(this.selectedMonth)}` : '';
+                },
+
+                updateCellAndClose(code) {
+                    const key = `${this.editingCellCollabId}_${this.selectedYear}_${this.selectedMonth}_${this.editingCellDay}`;
+                    this.schedule[key] = code;
+                    localStorage.setItem('scale_calendar_grid', JSON.stringify(this.schedule));
+                    this.isCellModalOpen = false;
+
+                    const collab = this.collaborators.find(c => c.id === this.editingCellCollabId);
+                    this.logAction('WRITE', `Alterou a escala de ${collab.name} no dia ${this.editingCellDay}/${this.selectedMonth} para ${code}.`);
+                },
+
+                // Collaborator Operations
+                submitAddCollaborator() {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    const id = 'col-' + Date.now();
+                    const newC = {
+                        id,
+                        matricula: this.collabMatricula,
+                        conselho: this.collabConselho || 'S/ CONSELHO',
+                        name: this.collabName.toUpperCase(),
+                        turno: this.collabTurno,
+                        funcao: this.collabFuncao.toUpperCase(),
+                        jornada: this.collabJornada,
+                        sectorId: this.selectedSectorId
+                    };
+                    this.collaborators.push(newC);
+                    this.isAddCollabOpen = false;
+
+                    // prepopulate their empty schedule
+                    for (let d = 1; d <= 31; d++) {
+                        const key = `${id}_${this.selectedYear}_${this.selectedMonth}_${d}`;
+                        this.schedule[key] = 'M/T';
+                    }
+                    localStorage.setItem('scale_calendar_grid', JSON.stringify(this.schedule));
+                    this.logAction('WRITE', `Cadastrou profissional diretamente no setor: ${newC.name} (${newC.matricula})`);
+
+                    // Clean form
+                    this.collabName = '';
+                    this.collabMatricula = '';
+                    this.collabConselho = '';
+                },
+
+                deleteCollaborator(id) {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    const collab = this.collaborators.find(c => c.id === id);
+                    if (confirm(`Deseja realmente excluir ${collab.name} de forma definitiva? Todos os dados da escala associada serão removidos permanentemente.`)) {
+                        this.collaborators = this.collaborators.filter(c => c.id !== id);
+                        this.logAction('DELETE', `Removeu o profissional ${collab.name} do hospital.`);
+                    }
+                },
+
+                // Sector Operations
+                submitAddSector() {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    if (!this.sectorName || !this.sectorManagerName) {
+                        alert('Favor preencher o Nome do Setor e o Gestor do Setor.');
+                        return;
+                    }
+                    const id = 'sec-' + Date.now();
+                    const newS = {
+                        id,
+                        name: this.sectorName.toUpperCase(),
+                        managerName: this.sectorManagerName.toUpperCase(),
+                        description: this.sectorDescription || 'Sem descrição'
+                    };
+                    this.sectors.push(newS);
+                    this.isAddSectorOpen = false;
+                    this.logAction('WRITE', `Criou novo setor: ${newS.name} (Gestor: ${newS.managerName})`);
+                    
+                    // clean form
+                    this.sectorName = '';
+                    this.sectorManagerName = '';
+                    this.sectorDescription = '';
+                },
+
+                deleteSector(id) {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    const sec = this.sectors.find(s => s.id === id);
+                    if (!sec) return;
+                    
+                    const hasCollabs = this.collaborators.some(c => c.sectorId === id);
+                    if (hasCollabs) {
+                        alert(`Você não pode remover o setor ${sec.name} porque existem colaboradores cadastrados nele. Remova ou transfira-os antes.`);
+                        return;
+                    }
+                    if (confirm(`Deseja realmente excluir o setor ${sec.name}?`)) {
+                        this.sectors = this.sectors.filter(s => s.id !== id);
+                        this.logAction('DELETE', `Removeu o setor ${sec.name}.`);
+                    }
+                },
+
+                // excel exports
+                exportToExcelSimulation() {
+                    alert('Exportação via planilha Excel habilitada com sucesso! Todos os dados de escala formatados foram gerados para download no formato padrão .xlsx.');
+                    this.logAction('READ', `Exportou planilha Excel (.xlsx) das escalas do setor.`);
+                },
+
+                // logs
+                logAction(type, details) {
+                    const nLog = {
+                        id: 'log-' + Date.now(),
+                        timestamp: new Date().toISOString(),
+                        userName: this.currentAdmin.name,
+                        userRole: this.currentAdmin.role,
+                        details
+                    };
+                    this.logs.unshift(nLog);
+                    localStorage.setItem('scale_logs_v1', JSON.stringify(this.logs));
+                },
+
+                clearLogs() {
+                    if (this.currentAdmin.role === 'LEITOR') {
+                        alert('Modo Leitor Ativo: Você não possui a permissão de alteração/exclusão em nenhuma aba.');
+                        return;
+                    }
+                    this.logs = [];
+                    localStorage.setItem('scale_logs_v1', JSON.stringify([]));
+                    this.logAction('DELETE', 'Limpou o histórico de acessos do painel.');
+                },
+
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('scale_dark_mode', this.darkMode ? 'true' : 'false');
+                    if (this.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                },
+
+                formatTimestamp(ts) {
+                    const d = new Date(ts);
+                    return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
 
